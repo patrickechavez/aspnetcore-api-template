@@ -1,0 +1,83 @@
+@ApiTemplate_HostAddress = http://localhost:5166
+
+### Register a new account (public; always creates Role = User)
+# @name register
+POST {{ApiTemplate_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "someone@example.com",
+  "password": "Password123",
+  "displayName": "Someone"
+}
+
+### Log in (the seeded administrator)
+# The password is whatever you set for Seed:AdminPassword in User Secrets:
+#   dotnet user-secrets set "Seed:AdminPassword" "<your password>"
+# @name login
+POST {{ApiTemplate_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "<your Seed:AdminPassword>"
+}
+
+@accessToken = {{login.response.body.accessToken}}
+@refreshToken = {{login.response.body.refreshToken}}
+
+### Current user
+GET {{ApiTemplate_HostAddress}}/api/users/me
+Authorization: Bearer {{accessToken}}
+
+### List users (admin only, paged)
+GET {{ApiTemplate_HostAddress}}/api/users?page=1&pageSize=20
+Authorization: Bearer {{accessToken}}
+
+### Get one user (admin, or the user themselves)
+GET {{ApiTemplate_HostAddress}}/api/users/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{accessToken}}
+
+### Create a user (admin only; unlike register, this one may assign a role)
+POST {{ApiTemplate_HostAddress}}/api/users
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "created@example.com",
+  "password": "Password123",
+  "displayName": "Created",
+  "role": "User"
+}
+
+### Update a user (admin, or the user themselves; only an admin may change role)
+PUT {{ApiTemplate_HostAddress}}/api/users/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "displayName": "Renamed"
+}
+
+### Delete a user (admin only; an admin cannot delete themselves)
+DELETE {{ApiTemplate_HostAddress}}/api/users/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{accessToken}}
+
+### Exchange the refresh token for a new pair (rotation: the old one is revoked)
+POST {{ApiTemplate_HostAddress}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Log out (revokes the supplied refresh token)
+POST {{ApiTemplate_HostAddress}}/api/auth/logout
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###

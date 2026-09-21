@@ -44,11 +44,11 @@ Single project, layered by folder. SOLID is enforced through interfaces and
 dependency injection rather than project boundaries.
 
 ```
-GettingStarted/
-├── GettingStarted.sln
+ApiTemplate/
+├── ApiTemplate.sln
 ├── docker-compose.yml
 ├── docs/superpowers/specs/
-└── GettingStarted/
+└── ApiTemplate/
     ├── Controllers/
     │   ├── AuthController.cs
     │   └── UsersController.cs
@@ -330,8 +330,8 @@ would otherwise keep expired tokens working past their `exp`.
 ```json
 {
   "Jwt": {
-    "Issuer": "GettingStarted",
-    "Audience": "GettingStarted",
+    "Issuer": "ApiTemplate",
+    "Audience": "ApiTemplate",
     "AccessTokenMinutes": 15,
     "RefreshTokenDays": 30
   },
